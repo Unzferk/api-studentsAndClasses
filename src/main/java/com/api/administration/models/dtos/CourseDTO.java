@@ -12,21 +12,16 @@ import javax.validation.constraints.NotNull;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentDTO {
+public class CourseDTO {
+
+    @NotNull
+    private String code;
 
     @NotNull
     @NotBlank
-    private String studentId;
+    private String title;
 
-    @NotNull
-    @NotBlank
-    private String firstName;
-
-    @NotNull
-    @NotBlank
-    private String lastName;
-
+    private String description;
 
     private boolean active;
-
 }
