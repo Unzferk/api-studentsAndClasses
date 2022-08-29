@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+    db-mysql:
+        container_name: administration
+        image: mysql:latest
+        environment:
+            - MYSQL_DATABASE=administration
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_USER=administration
+            - MYSQL_PASSWORD=administration
+        ports:
+            - "3333:3306"
+        restart: always
