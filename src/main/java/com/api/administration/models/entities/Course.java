@@ -1,5 +1,6 @@
 package com.api.administration.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,8 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "course")
@@ -38,4 +41,12 @@ public class Course {
 
     @Column(name = "active")
     private boolean active;
+
+    @ManyToMany
+    @JoinTable(
+            name = "course_student",
+            joinColumns = @JoinColumn(name = "course_uid"),
+            inverseJoinColumns = @JoinColumn(name = "student_uid"))
+    @JsonIgnoreProperties({"courses"})
+    private List<Student> students;
 }

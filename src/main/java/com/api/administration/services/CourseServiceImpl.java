@@ -4,8 +4,10 @@ import com.api.administration.exceptions.ResourceAlreadyExistException;
 import com.api.administration.exceptions.ResourceNotFoundException;
 import com.api.administration.models.dtos.CourseDTO;
 import com.api.administration.models.entities.Course;
+import com.api.administration.models.entities.Student;
 import com.api.administration.models.mappers.CourseMapper;
 import com.api.administration.repositories.CourseRepository;
+import com.api.administration.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Override
     public CourseDTO getCourse(String code){
@@ -64,5 +69,44 @@ public class CourseServiceImpl implements CourseService {
         }
         exist.get().setActive(false);
         courseRepository.save(exist.get());
+    }
+
+    @Override
+    public List<Student> getCourseStudents(String code) {
+        Optional<Course> course = courseRepository.findByCode(code);
+        if(!course.isPresent()){
+            throw new ResourceNotFoundException(Course.class, code);
+        }
+        return course.get().getStudents();
+    }
+
+    @Override
+    public Course addStudentToCourse(String code, String studentId) {
+        Optional<Course> course = courseRepository.findByCode(code);
+        Optional<Student> student = studentRepository.findByStudentId(studentId);
+        if(!course.isPresent()){
+            throw new ResourceNotFoundException(Course.class, code);
+        }
+        if(!student.isPresent()){
+            throw new ResourceNotFoundException(Student.class, code);
+        }
+
+        course.get().getStudents().add(student.get());
+        return courseRepository.save(course.get());
+    }
+
+    @Override
+    public Course removeStudentFromCourse(String code, String studentId) {
+        Optional<Course> course = courseRepository.findByCode(code);
+        Optional<Student> student = studentRepository.findByStudentId(studentId);
+        if(!course.isPresent()){
+            throw new ResourceNotFoundException(Course.class, code);
+        }
+        if(!student.isPresent()){
+            throw new ResourceNotFoundException(Student.class, code);
+        }
+
+        course.get().getStudents().remove(student.get());
+        return courseRepository.save(course.get());
     }
 }

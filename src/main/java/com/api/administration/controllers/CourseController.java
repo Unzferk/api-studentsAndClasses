@@ -2,6 +2,7 @@ package com.api.administration.controllers;
 
 import com.api.administration.models.dtos.CourseDTO;
 import com.api.administration.models.entities.Course;
+import com.api.administration.models.entities.Student;
 import com.api.administration.services.CourseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,5 +43,20 @@ public class CourseController {
     public ResponseEntity<String> deleteCourse(@PathVariable String code){
         courseService.deleteCourse(code);
         return new ResponseEntity<>("Course "+code+" has been deleted",HttpStatus.OK);
+    }
+
+    @GetMapping("/{code}/student")
+    public ResponseEntity<List<Student>> getCourseStudents(@PathVariable String code){
+        return new ResponseEntity<>(courseService.getCourseStudents(code), HttpStatus.OK);
+    }
+
+    @PutMapping("/{courseCode}/{studentId}")
+    public ResponseEntity<Course> addStudentToCourse(@PathVariable String courseCode, @PathVariable String studentId  ){
+        return new ResponseEntity<>(courseService.addStudentToCourse(courseCode,studentId), HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping("/{courseCode}/{studentId}")
+    public ResponseEntity<Course> removeStudentFromCourse(@PathVariable String courseCode, @PathVariable String studentId  ){
+        return new ResponseEntity<>(courseService.removeStudentFromCourse(courseCode,studentId), HttpStatus.ACCEPTED);
     }
 }
