@@ -1,5 +1,6 @@
 package com.api.administration.services;
 
+import com.api.administration.exceptions.ResourceAlreadyExistException;
 import com.api.administration.exceptions.ResourceNotFoundException;
 import com.api.administration.models.dtos.CourseDTO;
 import com.api.administration.models.entities.Course;
@@ -28,13 +29,18 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseDTO> getCourses(){
-        List<Course> courses = courseRepository.findAllByOrderByTitleAsc();
+        List<Course> courses = courseRepository.findAllActivesOrderByTitle();
         return CourseMapper.COURSE_MAPPER.toCourseDTO(courses);
     }
 
     @Override
     public CourseDTO postCourse(CourseDTO courseDTO){
+        Optional<Course> Course = courseRepository.findByCode(courseDTO.getCode());
+        if(Course.isPresent()){
+            throw new ResourceAlreadyExistException(Course.class, courseDTO.getCode());
+        }
         Course course = CourseMapper.COURSE_MAPPER.toCourse(courseDTO);
+        course.setActive(true);
         courseRepository.save(course);
         return courseDTO;
     }
