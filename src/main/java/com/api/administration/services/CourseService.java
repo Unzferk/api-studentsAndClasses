@@ -1,8 +1,8 @@
 package com.api.administration.services;
 
 import com.api.administration.models.dtos.CourseDTO;
+import com.api.administration.models.dtos.StudentSimpleDTO;
 import com.api.administration.models.entities.Course;
-import com.api.administration.models.entities.Student;
 
 import java.util.List;
 
@@ -13,11 +13,11 @@ public interface CourseService {
 
     CourseDTO postCourse(CourseDTO courseDTO);
 
-    CourseDTO putCourse(String code, Course course);
+    CourseDTO putCourse(String code, CourseDTO courseDTO);
 
     void deleteCourse(String code);
 
-    List<Student> getCourseStudents(String code);
+    List<StudentSimpleDTO> getCourseStudents(String code);
 
     Course addStudentToCourse(String code, String studentId);
 

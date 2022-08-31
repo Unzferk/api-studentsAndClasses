@@ -1,11 +1,15 @@
 package com.api.administration.services;
 
+import com.api.administration.exceptions.ResourceAHasntResourceBException;
 import com.api.administration.exceptions.ResourceAlreadyExistException;
 import com.api.administration.exceptions.ResourceNotFoundException;
+import com.api.administration.exceptions.ResourceAHasResourceBException;
 import com.api.administration.models.dtos.CourseDTO;
+import com.api.administration.models.dtos.StudentSimpleDTO;
 import com.api.administration.models.entities.Course;
 import com.api.administration.models.entities.Student;
 import com.api.administration.models.mappers.CourseMapper;
+import com.api.administration.models.mappers.StudentMapper;
 import com.api.administration.repositories.CourseRepository;
 import com.api.administration.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,14 +55,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDTO putCourse(String code, Course course){
+    public CourseDTO putCourse(String code, CourseDTO courseDTO){
         Optional<Course> exist = courseRepository.findByCode(code);
         if(!exist.isPresent()){
             throw new ResourceNotFoundException(Course.class, code);
         }
-        course.setUid(exist.get().getUid());
-        courseRepository.save(course);
-        return CourseMapper.COURSE_MAPPER.toCourseDTO(course);
+        CourseMapper.COURSE_MAPPER.updateCourseFromDTO(courseDTO,exist.get());
+        courseRepository.save(exist.get());
+        return CourseMapper.COURSE_MAPPER.toCourseDTO(exist.get());
     }
 
     @Override
@@ -72,24 +76,23 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Student> getCourseStudents(String code) {
+    public List<StudentSimpleDTO> getCourseStudents(String code) {
         Optional<Course> course = courseRepository.findByCode(code);
         if(!course.isPresent()){
             throw new ResourceNotFoundException(Course.class, code);
         }
-        return course.get().getStudents();
+        List<StudentSimpleDTO> studentDTOS = StudentMapper.STUDENT_MAPPER.toStudentSimpleDTO(course.get().getStudents());
+        return studentDTOS;
     }
 
     @Override
     public Course addStudentToCourse(String code, String studentId) {
         Optional<Course> course = courseRepository.findByCode(code);
         Optional<Student> student = studentRepository.findByStudentId(studentId);
-        if(!course.isPresent()){
-            throw new ResourceNotFoundException(Course.class, code);
-        }
-        if(!student.isPresent()){
-            throw new ResourceNotFoundException(Student.class, code);
-        }
+
+        if(!course.isPresent()) throw new ResourceNotFoundException(Course.class, code);
+        if(!student.isPresent()) throw new ResourceNotFoundException(Student.class, code);
+        if(courseRepository.studentRegistered(studentId,code)) throw new ResourceAHasResourceBException(studentId, code);
 
         course.get().getStudents().add(student.get());
         return courseRepository.save(course.get());
@@ -99,12 +102,10 @@ public class CourseServiceImpl implements CourseService {
     public Course removeStudentFromCourse(String code, String studentId) {
         Optional<Course> course = courseRepository.findByCode(code);
         Optional<Student> student = studentRepository.findByStudentId(studentId);
-        if(!course.isPresent()){
-            throw new ResourceNotFoundException(Course.class, code);
-        }
-        if(!student.isPresent()){
-            throw new ResourceNotFoundException(Student.class, code);
-        }
+
+        if(!course.isPresent()) throw new ResourceNotFoundException(Course.class, code);
+        if(!student.isPresent()) throw new ResourceNotFoundException(Student.class, code);
+        if(!courseRepository.studentRegistered(studentId,code)) throw new ResourceAHasntResourceBException(studentId, code);
 
         course.get().getStudents().remove(student.get());
         return courseRepository.save(course.get());

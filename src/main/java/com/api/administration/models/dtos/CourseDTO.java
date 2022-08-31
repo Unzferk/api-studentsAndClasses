@@ -27,5 +27,5 @@ public class CourseDTO {
 
     private boolean active;
 
-    List<Student> students;
+    List<StudentSimpleDTO> students;
 }

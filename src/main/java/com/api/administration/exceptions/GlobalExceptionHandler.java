@@ -24,6 +24,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    @ExceptionHandler(ResourceAHasntResourceBException.class)
+    public ResponseEntity ResourceAHasntResourceBException(ResourceAHasntResourceBException exception){
+        ErrorDetail errorDetail = new ErrorDetail();
+        errorDetail.setHttpStatus(HttpStatus.BAD_REQUEST.value());
+        errorDetail.setMessage(exception.getMessage());
+        errorDetail.setTimestamp(System.currentTimeMillis());
+        log.error(exception.getMessage());
+        return new ResponseEntity(errorDetail, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceAHasResourceBException.class)
+    public ResponseEntity ResourceAHasResourceBException(ResourceAHasResourceBException exception){
+        ErrorDetail errorDetail = new ErrorDetail();
+        errorDetail.setHttpStatus(HttpStatus.BAD_REQUEST.value());
+        errorDetail.setMessage(exception.getMessage());
+        errorDetail.setTimestamp(System.currentTimeMillis());
+        log.error(exception.getMessage());
+        return new ResponseEntity(errorDetail, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ResourceAlreadyExistException.class)
     public ResponseEntity handlerAlreadyExistException(ResourceAlreadyExistException exception){
         ErrorDetail errorDetail = new ErrorDetail();

@@ -7,27 +7,21 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentDTO {
+public class CourseSimpleDTO {
+
+    @NotNull
+    private String code;
 
     @NotNull
     @NotBlank
-    private String studentId;
+    private String title;
 
-    @NotNull
-    @NotBlank
-    private String firstName;
-
-    @NotNull
-    @NotBlank
-    private String lastName;
-
-    List<CourseSimpleDTO> courses;
+    private String description;
 
     private boolean active;
 
