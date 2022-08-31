@@ -1,5 +1,6 @@
 package com.api.administration.services;
 
+import com.api.administration.exceptions.ResourceAlreadyExistException;
 import com.api.administration.exceptions.ResourceNotFoundException;
 import com.api.administration.models.dtos.StudentDTO;
 import com.api.administration.models.entities.Student;
@@ -29,13 +30,18 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentDTO> getStudents(){
-        List<Student> students = studentRepository.findAllByOrderByFirstNameAsc();
+        List<Student> students = studentRepository.findAllActivesOrderByName();
         return StudentMapper.STUDENT_MAPPER.toStudentDTO(students);
     }
 
     @Override
     public StudentDTO postStudent(StudentDTO studentDTO){
+        Optional<Student> exist = studentRepository.findByStudentId(studentDTO.getStudentId());
+        if(exist.isPresent()){
+            throw new ResourceAlreadyExistException(Student.class, studentDTO.getStudentId());
+        }
         Student student = StudentMapper.STUDENT_MAPPER.toStudent(studentDTO);
+        student.setActive(true);
         studentRepository.save(student);
         return studentDTO;
     }
