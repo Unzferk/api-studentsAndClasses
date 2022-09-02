@@ -91,7 +91,7 @@ public class CourseServiceImpl implements CourseService {
         Optional<Student> student = studentRepository.findByStudentId(studentId);
 
         if(!course.isPresent()) throw new ResourceNotFoundException(Course.class, code);
-        if(!student.isPresent()) throw new ResourceNotFoundException(Student.class, code);
+        if(!student.isPresent()) throw new ResourceNotFoundException(Student.class, studentId);
         if(courseRepository.studentRegistered(studentId,code)) throw new ResourceAHasResourceBException(studentId, code);
 
         course.get().getStudents().add(student.get());
@@ -104,7 +104,7 @@ public class CourseServiceImpl implements CourseService {
         Optional<Student> student = studentRepository.findByStudentId(studentId);
 
         if(!course.isPresent()) throw new ResourceNotFoundException(Course.class, code);
-        if(!student.isPresent()) throw new ResourceNotFoundException(Student.class, code);
+        if(!student.isPresent()) throw new ResourceNotFoundException(Student.class, studentId);
         if(!courseRepository.studentRegistered(studentId,code)) throw new ResourceAHasntResourceBException(studentId, code);
 
         course.get().getStudents().remove(student.get());
