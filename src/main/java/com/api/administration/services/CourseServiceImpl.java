@@ -90,9 +90,15 @@ public class CourseServiceImpl implements CourseService {
         Optional<Course> course = courseRepository.findByCode(code);
         Optional<Student> student = studentRepository.findByStudentId(studentId);
 
-        if(!course.isPresent()) throw new ResourceNotFoundException(Course.class, code);
-        if(!student.isPresent()) throw new ResourceNotFoundException(Student.class, studentId);
-        if(courseRepository.studentRegistered(studentId,code)) throw new ResourceAHasResourceBException(studentId, code);
+        if(!course.isPresent()) {
+            throw new ResourceNotFoundException(Course.class, code);
+        }
+        if(!student.isPresent()) {
+            throw new ResourceNotFoundException(Student.class, studentId);
+        }
+        if(courseRepository.studentRegistered(studentId,code)) {
+            throw new ResourceAHasResourceBException(studentId, code);
+        }
 
         course.get().getStudents().add(student.get());
         return courseRepository.save(course.get());
@@ -103,9 +109,15 @@ public class CourseServiceImpl implements CourseService {
         Optional<Course> course = courseRepository.findByCode(code);
         Optional<Student> student = studentRepository.findByStudentId(studentId);
 
-        if(!course.isPresent()) throw new ResourceNotFoundException(Course.class, code);
-        if(!student.isPresent()) throw new ResourceNotFoundException(Student.class, studentId);
-        if(!courseRepository.studentRegistered(studentId,code)) throw new ResourceAHasntResourceBException(studentId, code);
+        if(!course.isPresent()) {
+            throw new ResourceNotFoundException(Course.class, code);
+        }
+        if(!student.isPresent()) {
+            throw new ResourceNotFoundException(Student.class, studentId);
+        }
+        if(!courseRepository.studentRegistered(studentId,code)) {
+            throw new ResourceAHasntResourceBException(studentId, code);
+        }
 
         course.get().getStudents().remove(student.get());
         return courseRepository.save(course.get());

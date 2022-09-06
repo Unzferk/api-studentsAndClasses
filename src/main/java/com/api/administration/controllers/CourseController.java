@@ -52,12 +52,12 @@ public class CourseController {
         return new ResponseEntity<>(courseService.getCourseStudents(code), HttpStatus.OK);
     }
 
-    @PutMapping("/{courseCode}/{studentId}")
+    @PutMapping("/{courseCode}/student/{studentId}")
     public ResponseEntity<Course> addStudentToCourse(@PathVariable String courseCode, @PathVariable String studentId  ){
         return new ResponseEntity<>(courseService.addStudentToCourse(courseCode,studentId), HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping("/{courseCode}/{studentId}")
+    @DeleteMapping("/{courseCode}/student/{studentId}")
     public ResponseEntity<Course> removeStudentFromCourse(@PathVariable String courseCode, @PathVariable String studentId  ){
         return new ResponseEntity<>(courseService.removeStudentFromCourse(courseCode,studentId), HttpStatus.ACCEPTED);
     }
